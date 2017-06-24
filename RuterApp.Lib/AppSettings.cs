@@ -35,5 +35,10 @@ namespace RuterApp.Lib
                 return "http://reisapi.ruter.no/Place/GetStop/" + MetroId;
             }
         }
+
+        public string UrlGetStation(int lineNumber)
+        {         
+                return "http://reisapi.ruter.no/Place/GetStopsByLineID/" + lineNumber;           
+        }
     }
 }

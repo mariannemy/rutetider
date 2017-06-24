@@ -6,6 +6,7 @@ namespace RuterApp.Models
     {
         public DeparturesInformation FirstDeparture { get; set; }
         public DeparturesInformation SecondDeparture { get; set; }
-        public StationInformation Station { get; set; }      
+        public StationInformation Station { get; set; }    
+        public string StationName { get; set; }
     }
 }

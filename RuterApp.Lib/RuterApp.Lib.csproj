@@ -54,6 +54,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RuterDataProvider.cs" />
     <Compile Include="Station.cs" />
+    <Compile Include="StationNameFetcher.cs" />
+    <Compile Include="StopsById.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
