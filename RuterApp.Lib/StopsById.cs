@@ -9,7 +9,7 @@ namespace RuterApp.Lib
 {
     public class StopsById
     {
-        public string ID { get; set; }
+        public int Id { get; set; }
         [JsonProperty("Name")]
         public string StationName { get; set; }
     }

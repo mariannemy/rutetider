@@ -20,12 +20,11 @@ namespace RuterApp.Lib
             }
         }
 
-        public string UrlGetDeparture
+        public string UrlGetDeparture(int metroId)
         {
-            get
-            {
-                return "http://reisapi.ruter.no/StopVisit/GetDepartures/" + MetroId + "?transporttypes=Metro";
-            }
+
+                return "http://reisapi.ruter.no/StopVisit/GetDepartures/" + metroId + "?transporttypes=Metro";
+ 
         }
 
         public string UrlGetStationName

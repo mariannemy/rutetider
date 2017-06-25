@@ -18,5 +18,14 @@ namespace RuterApp.Lib
 
             return _stationAndLine;
         }
+
+        public async Task<RuterApiDataResult[]> StopVisit_GetDepartures(int metroId)
+        {
+            RuterApiDataResult[] _departureApiResult = new RuterApiDataResult[Constants.NUMBER_OF_DEPARTURES];
+
+            _departureApiResult = await _ruterDataProvider.GetRuterData<RuterApiDataResult[]>(_setting.UrlGetDeparture(metroId));
+
+            return _departureApiResult;           
+        }
     }
 }
