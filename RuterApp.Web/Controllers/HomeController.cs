@@ -18,7 +18,7 @@ namespace RuterApp.Controllers
         private Departures _departure1;
         private Departures _departure2;
         private RuterApiDataResult[] _departureApiResult = new RuterApiDataResult[Constants.NUMBER_OF_DEPARTURES];
-        private StopsById[] _stationNames; 
+    
 
         public HomeController()
         {
@@ -29,7 +29,7 @@ namespace RuterApp.Controllers
             _departure2 = new Departures();
         }
 
-        private StationNameFetcher stationFetcher = new StationNameFetcher();
+     
 
 
 
@@ -52,10 +52,6 @@ namespace RuterApp.Controllers
             _station.SetStationName(_stationApiResult);
 
             _departureApiResult = await _ruterStation.GetRuterData<RuterApiDataResult[]>(_settings.UrlGetDeparture);
-
-
-           //  var metroLineNumber = _settings.UrlGetStation(4);
-            //_stationNames = await _ruterStation.GetRuterData<StopsById[]>(metroLineNumber);
            
             _departure1.SetDeparture(_settings, _departureApiResult, 1);
             _departure2.SetDeparture(_settings, _departureApiResult, 2);       
@@ -63,9 +59,12 @@ namespace RuterApp.Controllers
             var firstDeparture = new DeparturesInformation(_departure1);
             var secondDeparture = new DeparturesInformation(_departure2);
             var station = new StationInformation(_station);
-           
-            List <Tuple<int, string>> _stationNames = await stationFetcher.FetchData();
 
+     
+
+            var _ruterReiseFacade = new RuterReiseFacade();
+            List<Tuple<int, string>> _stationNames = await _ruterReiseFacade.GetAllStationNames();
+                
 
 
 
