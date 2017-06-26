@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using System;
-
+using RuterApp.Lib.Apis;
 
 namespace RuterApp.Controllers
 {
@@ -20,7 +20,7 @@ namespace RuterApp.Controllers
         private Departures _departure1;
         private Departures _departure2;
         private RuterApiDataResult[] _departureApiResult = new RuterApiDataResult[Constants.NUMBER_OF_DEPARTURES];
-    
+
 
         public HomeController()
         {
@@ -34,16 +34,12 @@ namespace RuterApp.Controllers
 
         public async Task<ActionResult> Index()
         {
-
             var _ruterReiseFacade = new RuterReiseFacade();
             List<Tuple<int, string, string>> _stationNames = await _ruterReiseFacade.GetAllStationsAndLines();
 
-
-            IEnumerable<string> stationList = _ruterReiseFacade.GetStationList(_stationNames);
-
             var viewModel = new PickStationViewModel
             {
-                Stations = stationList
+                Stations = _ruterReiseFacade.GetStationList(_stationNames)
             };
 
             return View(viewModel);
@@ -53,50 +49,58 @@ namespace RuterApp.Controllers
         private static SemaphoreSlim Semaphore = new SemaphoreSlim(1, 1);
         public async Task<ActionResult> Show()
         {
-            string value = Request["test2"];
+            string _fromStation = Request["FromStation"];
+            string _toStation = Request["ToStation"];
+
+
+
+
 
             await Semaphore.WaitAsync();
             try
             {
-                if(_stationApiResult == null)
+                if (_stationApiResult == null)
                 {
                     _stationApiResult = await _ruterStation.GetRuterData<RuterApiStationNameResult>(_settings.UrlGetStationName);
-                }                
+                }
             }
             finally
             {
-                Semaphore.Release(); 
+                Semaphore.Release();
             }
-    
+
             _station.SetStationName(_stationApiResult);
 
-            // _departureApiResult = await _ruterStation.GetRuterData<RuterApiDataResult[]>(_settings.UrlGetDeparture);
+
 
             RuterReiseApi _ruterReiseApi = new RuterReiseApi();
             _departureApiResult = await _ruterReiseApi.StopVisit_GetDepartures(3010360);
 
             _departure1.SetDeparture(_settings, _departureApiResult, 1);
-            _departure2.SetDeparture(_settings, _departureApiResult, 2);       
+            _departure2.SetDeparture(_settings, _departureApiResult, 2);
 
             var firstDeparture = new DeparturesInformation(_departure1);
             var secondDeparture = new DeparturesInformation(_departure2);
             var station = new StationInformation(_station);
 
-           // Dictionary<int, Tuple<int, string, string>> d = new Dictionary<int, Tuple<int, string, string>>();
-           
+
+
 
             var _ruterReiseFacade = new RuterReiseFacade();
             List<Tuple<int, string, string>> _stationNames = await _ruterReiseFacade.GetAllStationsAndLines();
-                
-        
-       
-                List<string> stationList = new List<string>();
 
-                foreach (var stat in _stationNames)
-                {
-                    stationList.Add(stat.Item2);
-                }
 
+
+            List<string> stationList = new List<string>();
+
+            foreach (var stat in _stationNames)
+            {
+                stationList.Add(stat.Item2);
+            }
+
+
+            IEnumerable<string> test = await _ruterReiseFacade.GetLinesServingStop(3010360);
+          
 
 
             var ViewModel = new RuterViewModel
@@ -105,10 +109,12 @@ namespace RuterApp.Controllers
                 SecondDeparture = secondDeparture,
                 Station = station,
                 StationName = _stationNames[0].Item3,
-                Test = value
+                Test = _fromStation,
+                Test2 = _toStation,
+            
 
 
-            };             
+            };
 
             return View(ViewModel);
         }

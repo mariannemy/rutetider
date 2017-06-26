@@ -5,7 +5,8 @@
 
   @using (Html.BeginForm("Show","Home"))
     {
-        @Html.DropDownList("test2", new SelectList(Model.Stations))
+        @Html.DropDownList("FromStation", new SelectList(Model.Stations))
+    @Html.DropDownList("ToStation", new SelectList(Model.Stations))
         <button type="submit" class="btn ">Save</button>
 
     }

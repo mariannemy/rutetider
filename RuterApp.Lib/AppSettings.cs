@@ -39,5 +39,10 @@ namespace RuterApp.Lib
         {         
                 return "http://reisapi.ruter.no/Place/GetStopsByLineID/" + lineNumber;           
         }
+
+        public string UrlGetLinesByStopId(int stopId)
+        {
+            return "http://reisapi.ruter.no/line/getlinesbystopid/" + stopId;
+        }
     }
 }

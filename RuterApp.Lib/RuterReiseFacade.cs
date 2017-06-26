@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RuterApp.Lib.Apis;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,38 @@ namespace RuterApp.Lib
     public class RuterReiseFacade
     {
         private RuterReiseApi _ruterReiseApi = new RuterReiseApi();
+
+        public async Task<IEnumerable<string>> GetLinesServingStop(int stopId)
+        {
+            LinesForSpecificStops[] linesForSpecificStops;
+            linesForSpecificStops = await _ruterReiseApi.Line_GetLinesByStopId(stopId);
+
+            List<int> linesForStop = linesForSpecificStops.Where(x => x.Transportation.Equals("8")).Select(x => x.LineNumber).ToList();
+
+            var AllLines = new List<Tuple<int, string>>
+            {
+                Tuple.Create(1, "Frognerseteren"),
+                Tuple.Create(1, "Bergkrystallen"),
+                Tuple.Create(2, "Østerås"),
+                Tuple.Create(2, "Ellingsrudåsen"),
+                Tuple.Create(3, "Kolsås"),
+                Tuple.Create(3, "Mortensrud"),
+                Tuple.Create(4, "Vestli"),
+                Tuple.Create(4, "Bergkrystallen"),
+                Tuple.Create(5, "Sognsvann"),
+                Tuple.Create(5, "Vestli")
+            };
+
+            List<string> linesServingStop = new List<string>();
+
+            foreach (var line in linesForStop)
+            {
+                linesServingStop.AddRange(AllLines.Where(x => x.Item1 == line).Select(x => x.Item2));
+            }            
+
+            return linesServingStop;
+        }
+
 
         public async Task<List<Tuple<int, string, string>>> GetAllStationsAndLines()
         {
@@ -38,7 +71,6 @@ namespace RuterApp.Lib
 
             stationList = stationsAndLines.Select(x => x.Item2).ToList().Distinct().OrderBy(x => x);
             stationList = stationList.Select(x => x.Replace(x, Regex.Replace(x ,"(\\[.*\\])", "")));
-
 
             return stationList;
         }

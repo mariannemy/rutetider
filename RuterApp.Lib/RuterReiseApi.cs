@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RuterApp.Lib.Apis;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,19 +14,26 @@ namespace RuterApp.Lib
 
         public async Task<StopsById[]> Line_GetStopsByLineId(int lineNumber)
         {            
-            StopsById[] _stationAndLine;
-            _stationAndLine = await _ruterDataProvider.GetRuterData<StopsById[]>(_setting.UrlGetStation(lineNumber));
+            StopsById[] stationAndLine;
+            stationAndLine = await _ruterDataProvider.GetRuterData<StopsById[]>(_setting.UrlGetStation(lineNumber));
 
-            return _stationAndLine;
+            return stationAndLine;
         }
 
         public async Task<RuterApiDataResult[]> StopVisit_GetDepartures(int metroId)
         {
-            RuterApiDataResult[] _departureApiResult = new RuterApiDataResult[Constants.NUMBER_OF_DEPARTURES];
+            RuterApiDataResult[] departureApiResult = new RuterApiDataResult[Constants.NUMBER_OF_DEPARTURES];
+            departureApiResult = await _ruterDataProvider.GetRuterData<RuterApiDataResult[]>(_setting.UrlGetDeparture(metroId));
 
-            _departureApiResult = await _ruterDataProvider.GetRuterData<RuterApiDataResult[]>(_setting.UrlGetDeparture(metroId));
+            return departureApiResult;           
+        }
 
-            return _departureApiResult;           
+        public async Task<LinesForSpecificStops[]> Line_GetLinesByStopId(int stopId)
+        {
+            LinesForSpecificStops[] linesForSpecificStops;
+            linesForSpecificStops = await _ruterDataProvider.GetRuterData<LinesForSpecificStops[]>(_setting.UrlGetLinesByStopId(stopId));
+
+            return linesForSpecificStops;
         }
     }
 }
