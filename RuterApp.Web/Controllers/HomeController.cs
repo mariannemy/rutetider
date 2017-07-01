@@ -34,13 +34,39 @@ namespace RuterApp.Controllers
 
         public async Task<ActionResult> Index()
         {
-            var _ruterReiseFacade = new RuterReiseFacade();
-            List<Tuple<int, string, string>> _stationNames = await _ruterReiseFacade.GetAllStationsAndLines();
+            var ruterReiseFacade = new RuterReiseFacade();
+            List<Tuple<int, string, int>> _stationNames = await ruterReiseFacade.GetAllStationsAndLines();
 
             var viewModel = new PickStationViewModel
             {
-                Stations = _ruterReiseFacade.GetStationList(_stationNames)
+                Stations = ruterReiseFacade.GetStationList(_stationNames)
             };
+
+            return View(viewModel);
+        }
+
+        public async Task<ActionResult> Stations()
+        {
+            var ruterReiseFacade = new RuterReiseFacade();
+
+            string _fromStation = Request["FromStation"];
+            string _toStation = Request["ToStation"];
+
+            List<Tuple<int, string, int>> _stationNames = await ruterReiseFacade.GetAllStationsAndLines();
+
+            int metroId = _stationNames.Find(x => x.Item2.ToLower().Equals(_fromStation.ToLower().Trim())).Item3;
+            //int metroId2 = _stationNames.Find(x => x.Item2.ToLower().Equals(_fromStation.ToLower())).
+
+            //Vurdere å putte den hardkodede linjeoversikten i static, kanskje i constants?
+            List<string> linesServingStation = await ruterReiseFacade.GetLinesServingStop(metroId);
+            linesServingStation.Add("Velg alle");
+
+            var viewModel = new PickLinesViewModel
+            {
+                LinesServingStation = linesServingStation
+            };
+
+            //Vise dette i viewet sammen med avhukinger :)
 
             return View(viewModel);
         }
@@ -49,8 +75,7 @@ namespace RuterApp.Controllers
         private static SemaphoreSlim Semaphore = new SemaphoreSlim(1, 1);
         public async Task<ActionResult> Show()
         {
-            string _fromStation = Request["FromStation"];
-            string _toStation = Request["ToStation"];
+           
 
 
 
@@ -87,7 +112,7 @@ namespace RuterApp.Controllers
 
 
             var _ruterReiseFacade = new RuterReiseFacade();
-            List<Tuple<int, string, string>> _stationNames = await _ruterReiseFacade.GetAllStationsAndLines();
+            List<Tuple<int, string, int>> _stationNames = await _ruterReiseFacade.GetAllStationsAndLines();
 
 
 
@@ -99,7 +124,7 @@ namespace RuterApp.Controllers
             }
 
 
-            IEnumerable<string> test = await _ruterReiseFacade.GetLinesServingStop(3010360);
+           
           
 
 
@@ -108,10 +133,7 @@ namespace RuterApp.Controllers
                 FirstDeparture = firstDeparture,
                 SecondDeparture = secondDeparture,
                 Station = station,
-                StationName = _stationNames[0].Item3,
-                Test = _fromStation,
-                Test2 = _toStation,
-            
+                
 
 
             };

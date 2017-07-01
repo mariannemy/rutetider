@@ -3,7 +3,7 @@
     
  <div >
 
-  @using (Html.BeginForm("Show","Home"))
+  @using (Html.BeginForm("Stations","Home"))
     {
         @Html.DropDownList("FromStation", new SelectList(Model.Stations))
     @Html.DropDownList("ToStation", new SelectList(Model.Stations))

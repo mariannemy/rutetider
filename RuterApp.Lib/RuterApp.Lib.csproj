@@ -58,6 +58,7 @@
     <Compile Include="RuterReiseFacade.cs" />
     <Compile Include="Station.cs" />
     <Compile Include="Apis\StopsById.cs" />
+    <Compile Include="StringUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

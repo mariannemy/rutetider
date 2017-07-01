@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace RuterApp.Lib
@@ -12,7 +11,7 @@ namespace RuterApp.Lib
     {
         private RuterReiseApi _ruterReiseApi = new RuterReiseApi();
 
-        public async Task<IEnumerable<string>> GetLinesServingStop(int stopId)
+        public async Task<List<string>> GetLinesServingStop(int stopId)
         {
             LinesForSpecificStops[] linesForSpecificStops;
             linesForSpecificStops = await _ruterReiseApi.Line_GetLinesByStopId(stopId);
@@ -44,12 +43,12 @@ namespace RuterApp.Lib
         }
 
 
-        public async Task<List<Tuple<int, string, string>>> GetAllStationsAndLines()
+        public async Task<List<Tuple<int, string, int>>> GetAllStationsAndLines()
         {
             var _totalNumberOfLines = 5;
             StopsById[] _stopsById;
-            var _stationsAndLinesOverview = new List<Tuple<int, string, string>>();
-            var _spesificStationNames = new List<Tuple<int, string, string>>();
+            var _stationsAndLinesOverview = new List<Tuple<int, string, int>>();
+            var _spesificStationNames = new List<Tuple<int, string, int>>();
 
             for (int i = 0; i < _totalNumberOfLines; i++)
             {
@@ -57,7 +56,7 @@ namespace RuterApp.Lib
 
                 foreach (var station in _stopsById)
                 {
-                    _spesificStationNames.Add(new Tuple<int, string, string>(i, station.StationName, station.Id.ToString()));
+                    _spesificStationNames.Add(new Tuple<int, string, int>(i, StringUtils.GetNormalizedStationName(station.StationName), station.Id));
                 }
 
                 _stationsAndLinesOverview.AddRange(_spesificStationNames);
@@ -65,15 +64,17 @@ namespace RuterApp.Lib
             return _stationsAndLinesOverview;
         }
 
-        public IEnumerable<string> GetStationList(List<Tuple<int, string, string>> stationsAndLines)
+        public IEnumerable<string> GetStationList(List<Tuple<int, string, int>> stationsAndLines)
         {
             IEnumerable<string> stationList = new List<string>();
 
             stationList = stationsAndLines.Select(x => x.Item2).ToList().Distinct().OrderBy(x => x);
-            stationList = stationList.Select(x => x.Replace(x, Regex.Replace(x ,"(\\[.*\\])", "")));
+            stationList = stationList.Select(stationName => StringUtils.GetNormalizedStationName(stationName));
 
             return stationList;
         }
+
+ 
         
     }
 }

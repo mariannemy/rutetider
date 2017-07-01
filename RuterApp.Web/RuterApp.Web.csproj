@@ -120,6 +120,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\PickLinesViewModel.cs" />
     <Compile Include="Models\PickStationViewModel.cs" />
     <Compile Include="Models\RuterData.cs" />
     <Compile Include="Models\RuterViewModel.cs" />
