@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using System;
 using RuterApp.Lib.Apis;
+using System.ComponentModel.DataAnnotations;
 
 namespace RuterApp.Controllers
 {
@@ -37,6 +38,9 @@ namespace RuterApp.Controllers
             var ruterReiseFacade = new RuterReiseFacade();
             List<Tuple<int, string, int>> _stationNames = await ruterReiseFacade.GetAllStationsAndLines();
 
+
+  
+
             var viewModel = new PickStationViewModel
             {
                 Stations = ruterReiseFacade.GetStationList(_stationNames)
@@ -50,34 +54,46 @@ namespace RuterApp.Controllers
             var ruterReiseFacade = new RuterReiseFacade();
 
             string _fromStation = Request["FromStation"];
-            string _toStation = Request["ToStation"];
+           
+
 
             List<Tuple<int, string, int>> _stationNames = await ruterReiseFacade.GetAllStationsAndLines();
+            int fromStationId = _stationNames.Find(x => x.Item2.ToLower().Equals(_fromStation.ToLower())).Item3;
 
-            int metroId = _stationNames.Find(x => x.Item2.ToLower().Equals(_fromStation.ToLower().Trim())).Item3;
-            //int metroId2 = _stationNames.Find(x => x.Item2.ToLower().Equals(_fromStation.ToLower())).
+            Dictionary<string, string> linesServingStation = await ruterReiseFacade.GetLinesServingStop(fromStationId);
 
-            //Vurdere å putte den hardkodede linjeoversikten i static, kanskje i constants?
-            List<string> linesServingStation = await ruterReiseFacade.GetLinesServingStop(metroId);
-            linesServingStation.Add("Velg alle");
+            string chooseAllStations = String.Empty;
+            foreach (var lines in linesServingStation)
+            {
+                chooseAllStations = chooseAllStations + lines.Key + ";";
+            }
+            linesServingStation.Add(chooseAllStations, "Velg alle");
 
-            var viewModel = new PickLinesViewModel
+        
+
+           var viewModel = new PickLinesViewModel
             {
                 LinesServingStation = linesServingStation
-            };
-
-            //Vise dette i viewet sammen med avhukinger :)
+            };    
 
             return View(viewModel);
         }
 
 
         private static SemaphoreSlim Semaphore = new SemaphoreSlim(1, 1);
-        public async Task<ActionResult> Show()
+        public async Task<ActionResult> Show(PickLinesViewModel lines)
         {
-           
+            //MÅ ha med validering
+            //må ha logikk så ikke kan velge stasjoner + velg alle
+  
+        string selectedLines = Request["selectedLines"];
 
 
+
+            string[] selectedLinesArray = selectedLines.Split(',');
+
+
+           // int g = Int32.Parse(selectedLinesArray[0]);
 
 
 

@@ -16,6 +16,7 @@ namespace RuterApp.Lib
         public string LineNumberRef { get; set; }
         public string DirectionRef { get; set; }
         public string DestinationName { get; set; }
+        public int DestinationRef { get; set; }
         public string VehicleMode { get; set; }
         [JsonProperty("MonitoredCall")]
         public MonitoredInfo RealTimeInfo { get; set; }

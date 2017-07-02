@@ -1,0 +1,31 @@
+﻿@model RuterApp.Models.PickLinesViewModel
+<section class="container">
+
+    <div>
+        @Html.ValidationMessage("Error")
+        @using (Html.BeginForm("Show", "Home"))
+        {
+            string id;
+            int i = 0;
+            <ul>
+                @foreach(var line in Model.LinesServingStation)
+                {
+                     id = "id_" + i;
+                    <li>
+                        
+                        <input type="checkbox"  id=@id name="selectedLines" value="@line.Key" />
+                        <label>@line.Value</label>
+                    </li>
+                    i++;
+                }
+            </ul>
+
+        
+            <button type="submit" class="btn ">Save</button>
+        }
+
+
+
+    </div>
+
+</section>

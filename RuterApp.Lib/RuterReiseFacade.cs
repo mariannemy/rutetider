@@ -11,7 +11,29 @@ namespace RuterApp.Lib
     {
         private RuterReiseApi _ruterReiseApi = new RuterReiseApi();
 
-        public async Task<List<string>> GetLinesServingStop(int stopId)
+        public async Task<Dictionary<string, string>> GetLinesServingStop(int stopId)
+        {
+            RuterApiDataResult[] apiResult = await _ruterReiseApi.StopVisit_GetDepartures(stopId);
+
+            var linesServingStop = new Dictionary<string, string>();
+
+            string stationAndLineTextString;
+
+            foreach (var station in apiResult)
+            {
+                stationAndLineTextString = "Linje " + station.GeneralInfo.LineNumberRef + " retning " + station.GeneralInfo.DestinationName;
+
+                if (!linesServingStop.ContainsKey(station.GeneralInfo.DestinationRef.ToString()))
+                {
+                    linesServingStop.Add(station.GeneralInfo.DestinationRef.ToString(), stationAndLineTextString);
+                }               
+            }
+            return linesServingStop;
+        }
+
+
+
+        /*public async Task<List<string>> GetLinesServingStop(int stopId)
         {
             LinesForSpecificStops[] linesForSpecificStops;
             linesForSpecificStops = await _ruterReiseApi.Line_GetLinesByStopId(stopId);
@@ -40,7 +62,7 @@ namespace RuterApp.Lib
             }            
 
             return linesServingStop;
-        }
+        }*/
 
 
         public async Task<List<Tuple<int, string, int>>> GetAllStationsAndLines()

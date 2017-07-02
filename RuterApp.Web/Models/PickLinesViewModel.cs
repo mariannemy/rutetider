@@ -7,6 +7,6 @@ namespace RuterApp.Models
 {
     public class PickLinesViewModel
     {
-        public List<string> LinesServingStation { get; set; }
+        public Dictionary<string, string> LinesServingStation { get; set; }
     }
 }
