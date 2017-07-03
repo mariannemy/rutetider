@@ -2,7 +2,8 @@
 <section class="container">
 
     <div>
-        @Html.ValidationMessage("Error")
+        @Html.ValidationMessage("ChooseAStation")
+        @Html.ValidationSummary()
         @using (Html.BeginForm("Show", "Home"))
         {
             string id;
