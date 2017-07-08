@@ -40,9 +40,6 @@ namespace RuterApp.Controllers
             var ruterReiseFacade = new RuterReiseFacade();
             List<Tuple<int, string, int>> _stationNames = await ruterReiseFacade.GetAllStationsAndLines();
 
-
-
-
             var viewModel = new PickStationViewModel
             {
                 Stations = ruterReiseFacade.GetStationList(_stationNames)
@@ -50,49 +47,66 @@ namespace RuterApp.Controllers
 
             return View(viewModel);
         }
+
+
+
         public class CookieValues
         {
             public string StationId { get; set; }
             public string MetroId { get; set; }
         }
 
-        public void SetCookie(CookieValues cookieValues)
-        {
-            //må endre til en konstant!!!
-            var cookie = new HttpCookie("ruterAppUserId");
-            cookie.Value = JsonConvert.SerializeObject(cookieValues);
-            cookie.Expires = DateTime.Now.AddYears(1);
-            Response.Cookies.Add(cookie);
-        }
-
-        public void OverwriteCookieValue()
-        {
-
-        }
-
-        public CookieValues GetCookie()
+        public bool CookieExists()
         {
             List<string> clientCookies = new List<string>(Request.Cookies.AllKeys);
 
             if (clientCookies.Exists(x => x.Contains("ruterAppUserId")))
             {
-                var cookie = Request.Cookies.Get("ruterAppUserId");
-                var cookieValues = JsonConvert.DeserializeObject<CookieValues>(Server.UrlEncode(cookie.Value));
+                return true;
+            }
+            return false;
+        }
+
+        public void SetCookie(CookieValues cookieValues)
+        {
+            //må endre til en konstant!!!
+            var cookie = new HttpCookie("ruterAppUserId");
+            cookie.Value = JsonConvert.SerializeObject(EncodeValues(cookieValues));
+            cookie.Expires = DateTime.Now.AddYears(1);
+            Response.Cookies.Add(cookie);
+        }
+
+        public CookieValues GetCookieValues()
+        {
+            List<string> clientCookies = new List<string>(Request.Cookies.AllKeys);
+
+            if (clientCookies.Exists(x => x.Contains("ruterAppUserId")))
+            {
+                var cookie = Request.Cookies.Get("ruterAppUserId");              
+                var cookieValues = new CookieValues();
+           
+                cookieValues = JsonConvert.DeserializeObject<CookieValues>(cookie.Value);
+                cookieValues.StationId = Server.UrlDecode(cookieValues.StationId);
                 return cookieValues;
             }
 
             return null;
         }
 
-        public void OverWriteCookieValue(CookieValues cookieValue)
+        public CookieValues EncodeValues(CookieValues cookieValues)
         {
-            //Kanskje putte urlenkoding inn her
-            List<string> clientCookies = new List<string>(Request.Cookies.AllKeys);
-         
+            cookieValues.MetroId = cookieValues.MetroId;
+            cookieValues.StationId = Server.UrlEncode(cookieValues.StationId);
+            return cookieValues;
+        }
 
+        public void OverWriteCookieValue(CookieValues cookieValues)
+        {
+
+            List<string> clientCookies = new List<string>(Request.Cookies.AllKeys);
             var cookie = Request.Cookies.Get("ruterAppUserId");
-            cookie.Value = JsonConvert.SerializeObject(cookieValue);
-      
+            cookie.Value = JsonConvert.SerializeObject(EncodeValues(cookieValues));
+            Response.Cookies.Set(cookie);
 
         }
 
@@ -102,54 +116,56 @@ namespace RuterApp.Controllers
         {
             var ruterReiseFacade = new RuterReiseFacade();
 
-            string _fromStation = Request["FromStation"];
-            string metros = "seglkh, segs, sgeg,";
+            string selectedStation = Request["FromStation"];
+
 
             //Test ny cookie
-            var info = new CookieValues
+            var cookieValue = new CookieValues
             {
-                StationId = Server.UrlEncode(_fromStation),
-                MetroId = metros
+                StationId = selectedStation,
+                MetroId = ""
             };
 
+            // CookieValues cookieValues = new CookieValues();
 
-
-            HttpCookie cookieTest = new HttpCookie("cookieTest", JsonConvert.SerializeObject(info));
-            Response.Cookies.Add(cookieTest);
-
-
-
-
-
-
-            //sjekk og gi cookie, må vær emulig å skrive over cookie hvis man har en fra før av
-            string[] clientCookies = Request.Cookies.AllKeys;
-            List<string> clientCookiesList = new List<string>();
-            clientCookiesList.AddRange(clientCookies);
-
-            if (!clientCookiesList.Contains("ruterAppUserId"))
+            if (!CookieExists())
             {
-                HttpCookie cookie = new HttpCookie("ruterAppUserId", Server.UrlEncode(_fromStation));
-                cookie.Expires = DateTime.Now.AddYears(1);
-                Response.Cookies.Add(cookie);
+                if (String.IsNullOrEmpty(selectedStation))
+                {
+                    return RedirectToAction("Index");
+                }
+                SetCookie(cookieValue);
+            }
+            else
+            {
+                if (String.IsNullOrEmpty(selectedStation))
+                {
+                    cookieValue = GetCookieValues();
+                    if (cookieValue == null)
+                    {
+                        return RedirectToAction("Index");
+                    }
+                    selectedStation = cookieValue.StationId;
+
+                }
+                else
+                {
+                    OverWriteCookieValue(cookieValue);
+                }
 
             }
 
-            if (String.IsNullOrEmpty(_fromStation))
+            if (String.IsNullOrEmpty(selectedStation))
             {
                 if (TempData["CustomError"] != null)
                 {
                     ModelState.AddModelError("", TempData["CustomError"].ToString());
                 }
-                var cookie = Request.Cookies.Get("ruterAppUserId");
-                _fromStation = Server.UrlDecode(cookie.Value);
             }
 
-
-
-
             List<Tuple<int, string, int>> _stationNames = await ruterReiseFacade.GetAllStationsAndLines();
-            int fromStationId = _stationNames.Find(x => x.Item2.ToLower().Equals(_fromStation.ToLower())).Item3;
+
+            int fromStationId = _stationNames.Find(x => x.Item2.ToLower().Equals(selectedStation.ToLower())).Item3;
 
             Dictionary<string, string> linesServingStation = await ruterReiseFacade.GetLinesServingStop(fromStationId);
 
@@ -172,24 +188,17 @@ namespace RuterApp.Controllers
 
 
         private static SemaphoreSlim Semaphore = new SemaphoreSlim(1, 1);
+
+
         public async Task<ActionResult> Show(PickLinesViewModel lines)
         {
-            //MÅ ha med validering
-            //må ha logikk så ikke kan velge stasjoner + velg alle
 
             string selectedLines = Request["selectedLines"];
+            string selectedStation;
 
-            var cookie = Request.Cookies.Get("cookieTest");
-            var coInfo = new CookieValues();
-            coInfo = JsonConvert.DeserializeObject<CookieValues>(Server.UrlDecode(cookie.Value));
+            var cookie = new CookieValues();
 
-
-
-
-
-
-
-
+            //No chosen lines
             if (String.IsNullOrEmpty(selectedLines))
             {
                 TempData["CustomError"] = "Du må velge en";
@@ -198,13 +207,46 @@ namespace RuterApp.Controllers
 
             }
 
+            //Redirect if no cookie exist og cookie values not set
+            if (!CookieExists())
+            {
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                cookie = GetCookieValues();
+                if (cookie == null)
+                {
+                    return RedirectToAction("Index");
+                }
+                selectedStation = cookie.StationId;
+            }
+
+            //Overwrite with selected lines
+            var cookieValues = new CookieValues
+            {
+                StationId = cookie.StationId,
+                MetroId = selectedLines
+            };
+
+            OverWriteCookieValue(cookieValues);
+
+            var _ruterReiseFacade = new RuterReiseFacade();
+
+            List<Tuple<int, string, int>> allStationsAndLines = await _ruterReiseFacade.GetAllStationsAndLines();
+            int selectedStationId = allStationsAndLines.Find(x => x.Item2.ToLower().Equals(selectedStation.ToLower())).Item3;
+
+            //*******Ta inn stationsID og liste over metroID - vise de to neste*******
+            RuterApiDataResult[] departureApiResults;
+            RuterReiseApi _ruterReiseApi = new RuterReiseApi();
+
+            departureApiResults = await _ruterReiseApi.StopVisit_GetDepartures(selectedStationId);
+
+
+
+
+
             string[] selectedLinesArray = selectedLines.Split(',');
-
-
-
-            // int g = Int32.Parse(selectedLinesArray[0]);
-
-
 
             await Semaphore.WaitAsync();
             try
@@ -222,9 +264,8 @@ namespace RuterApp.Controllers
             _station.SetStationName(_stationApiResult);
 
 
-
-            RuterReiseApi _ruterReiseApi = new RuterReiseApi();
-            _departureApiResult = await _ruterReiseApi.StopVisit_GetDepartures(3010360);
+            
+            _departureApiResult = await _ruterReiseApi.StopVisit_GetDepartures(selectedStationId);
 
             _departure1.SetDeparture(_settings, _departureApiResult, 1);
             _departure2.SetDeparture(_settings, _departureApiResult, 2);
@@ -236,7 +277,6 @@ namespace RuterApp.Controllers
 
 
 
-            var _ruterReiseFacade = new RuterReiseFacade();
             List<Tuple<int, string, int>> _stationNames = await _ruterReiseFacade.GetAllStationsAndLines();
 
 
