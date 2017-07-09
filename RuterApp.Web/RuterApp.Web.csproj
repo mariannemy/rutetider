@@ -120,6 +120,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\DepartureViewModel.cs" />
     <Compile Include="Models\PickLinesViewModel.cs" />
     <Compile Include="Models\PickStationViewModel.cs" />
     <Compile Include="Models\RuterData.cs" />
@@ -135,6 +136,7 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Home\Show.cshtml" />
     <Content Include="Views\Home\Stations.cshtml" />
+    <Content Include="Views\Home\StationsTest.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

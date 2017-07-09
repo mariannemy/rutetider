@@ -82,9 +82,9 @@ namespace RuterApp.Controllers
 
             if (clientCookies.Exists(x => x.Contains("ruterAppUserId")))
             {
-                var cookie = Request.Cookies.Get("ruterAppUserId");              
+                var cookie = Request.Cookies.Get("ruterAppUserId");
                 var cookieValues = new CookieValues();
-           
+
                 cookieValues = JsonConvert.DeserializeObject<CookieValues>(cookie.Value);
                 cookieValues.StationId = Server.UrlDecode(cookieValues.StationId);
                 return cookieValues;
@@ -236,17 +236,64 @@ namespace RuterApp.Controllers
             List<Tuple<int, string, int>> allStationsAndLines = await _ruterReiseFacade.GetAllStationsAndLines();
             int selectedStationId = allStationsAndLines.Find(x => x.Item2.ToLower().Equals(selectedStation.ToLower())).Item3;
 
-            //*******Ta inn stationsID og liste over metroID - vise de to neste*******
+
+
+            //***************************************************Ta inn stationsID og liste over metroID - vise de to neste*******
             RuterApiDataResult[] departureApiResults;
             RuterReiseApi _ruterReiseApi = new RuterReiseApi();
 
             departureApiResults = await _ruterReiseApi.StopVisit_GetDepartures(selectedStationId);
 
-
-
-
+            List<Tuple<string, string>> metroNameAndDeparture = new List<Tuple<string, string>>();
 
             string[] selectedLinesArray = selectedLines.Split(',');
+            double minutesPassed;
+            string minutesToDeparture;
+            foreach (var departures in departureApiResults)
+            {
+                for (int i = 0; i < selectedLinesArray.Length; i++)
+
+                {
+                    if (departures.GeneralInfo.DestinationRef.Equals(Int32.Parse( selectedLinesArray[i])))
+                    {
+                        minutesPassed = Math.Floor((departures.GeneralInfo.RealTimeInfo.ExpectedDepartureTime - DateTime.Now).TotalMinutes + 0.30);
+
+                        minutesToDeparture = minutesPassed.ToString();
+
+                        if (minutesPassed == 0)
+                        {
+                            minutesToDeparture = "NÅ";
+                        }
+                        if (minutesPassed >= 60)
+                        {
+                            minutesToDeparture = "Ingen";
+                        }
+
+
+                        metroNameAndDeparture.Add(new Tuple<string, string>(StringUtils.GetNormalizedStationName
+                            (departures.GeneralInfo.DestinationName), minutesPassed.ToString()));
+                    }
+                }
+            }
+            
+            //*************************************************************************
+
+
+
+     
+
+            DepartureViewModel depViewModel = new DepartureViewModel
+            {
+                LineAndDeparture = metroNameAndDeparture,
+                StationName = selectedStation
+            };
+
+            return View("StationsTest", depViewModel);
+
+            //Fikse tid**********************
+
+
+
 
             await Semaphore.WaitAsync();
             try
@@ -264,7 +311,7 @@ namespace RuterApp.Controllers
             _station.SetStationName(_stationApiResult);
 
 
-            
+
             _departureApiResult = await _ruterReiseApi.StopVisit_GetDepartures(selectedStationId);
 
             _departure1.SetDeparture(_settings, _departureApiResult, 1);
