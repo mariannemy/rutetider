@@ -32,39 +32,6 @@ namespace RuterApp.Lib
         }
 
 
-
-        /*public async Task<List<string>> GetLinesServingStop(int stopId)
-        {
-            LinesForSpecificStops[] linesForSpecificStops;
-            linesForSpecificStops = await _ruterReiseApi.Line_GetLinesByStopId(stopId);
-
-            List<int> linesForStop = linesForSpecificStops.Where(x => x.Transportation.Equals("8")).Select(x => x.LineNumber).ToList();
-
-            var AllLines = new List<Tuple<int, string>>
-            {
-                Tuple.Create(1, "Frognerseteren"),
-                Tuple.Create(1, "Bergkrystallen"),
-                Tuple.Create(2, "Østerås"),
-                Tuple.Create(2, "Ellingsrudåsen"),
-                Tuple.Create(3, "Kolsås"),
-                Tuple.Create(3, "Mortensrud"),
-                Tuple.Create(4, "Vestli"),
-                Tuple.Create(4, "Bergkrystallen"),
-                Tuple.Create(5, "Sognsvann"),
-                Tuple.Create(5, "Vestli")
-            };
-
-            List<string> linesServingStop = new List<string>();
-
-            foreach (var line in linesForStop)
-            {
-                linesServingStop.AddRange(AllLines.Where(x => x.Item1 == line).Select(x => x.Item2));
-            }            
-
-            return linesServingStop;
-        }*/
-
-
         public async Task<List<Tuple<int, string, int>>> GetAllStationsAndLines()
         {
             var _totalNumberOfLines = 5;
@@ -95,6 +62,45 @@ namespace RuterApp.Lib
 
             return stationList;
         }
+
+        public async Task<List<Tuple<string, string>>> GetDepartures(int selectedStationId, string[] selectedMetrosId)
+        {
+            List<Tuple<string, string>> metroNameAndDeparture = new List<Tuple<string, string>>();
+            RuterApiDataResult[] departureApiResults = await _ruterReiseApi.StopVisit_GetDepartures(selectedStationId);
+
+            double minutesPassed;
+            string minutesToDeparture;
+
+            foreach (var departures in departureApiResults)
+            {
+                for (int i = 0; i < selectedMetrosId.Length; i++)
+
+                {
+                    if (departures.GeneralInfo.DestinationRef.Equals(Int32.Parse(selectedMetrosId[i])))
+                    {
+                      
+                        minutesPassed = Math.Floor((departures.GeneralInfo.RealTimeInfo.ExpectedDepartureTime - DateTime.Now).TotalMinutes + 0.30);
+
+                        minutesToDeparture = minutesPassed.ToString();
+
+                        if (minutesPassed == 0)
+                        {
+                            minutesToDeparture = "NÅ";
+                        }
+                        if (minutesPassed >= 60)
+                        {
+                            minutesToDeparture = "Ingen";
+                        }
+                        metroNameAndDeparture.Add(new Tuple<string, string>(StringUtils.GetNormalizedStationName
+                                                    (departures.GeneralInfo.DestinationName), minutesToDeparture));
+                    }
+                }
+            }
+            return metroNameAndDeparture;
+        }
+
+
+            
 
  
         

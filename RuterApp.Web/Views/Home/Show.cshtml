@@ -1,73 +1,58 @@
-﻿@model RuterApp.Models.RuterViewModel
+﻿@model RuterApp.Models.DepartureViewModel
 <section class="container">
-    <div>
-        <p>@Model.Test</p>
-        <p>@Model.Test2</p>
-    </div>
+
     <div class="this-station">
-        <div class="stations-text">@Model.Station.Name </div>
+        <div class="stations-text">@Model.StationName </div>
     </div>
-    @if (Model.FirstDeparture.DepartureExists)
-    {
+
         <div class="departure1">
-            <div class="end-station">Bergkrystallen via Majorstuen</div>
+            <div class="end-station">@Model.LineAndDeparture[0].Item1</div>
             <div class="minutes">
 
-                @if (@Model.FirstDeparture.getMinutes() == "ingen")
+                @if (@Model.LineAndDeparture[0].Item2 == "Ingen")
                 {
                     <span class="no-departure">60+ min</span>
                 }
-                else if (@Model.FirstDeparture.getMinutes() == "NÅ")
+                else if (@Model.LineAndDeparture[0].Item2 == "NÅ")
                 {
                     <span class="minutes-text">NÅ</span>
                 }
                 else
                 {
-                    @Model.FirstDeparture.getMinutes()<span class="minutes-text">min</span>
+                    @Model.LineAndDeparture[0].Item2<span class="minutes-text">min</span>
                 }
 
 
             </div>
         </div>
-    }
+  
 
-    @if (Model.SecondDeparture.DepartureExists)
-    {
-        <div class="departure2">
-            <divp class="end-station">@Model.SecondDeparture.LineName
-        </div>
+    <div class="departure1">
+        <div class="end-station">@Model.LineAndDeparture[1].Item1</div>
         <div class="minutes">
 
-            @if (@Model.SecondDeparture.getMinutes() == "ingen")
+            @if (@Model.LineAndDeparture[1].Item2 == "Ingen")
             {
                 <span class="no-departure">60+ min</span>
             }
-            else if (@Model.SecondDeparture.getMinutes() == "NÅ")
+            else if (@Model.LineAndDeparture[1].Item2 == "NÅ")
             {
                 <span class="minutes-text">NÅ</span>
             }
             else
             {
-                @Model.SecondDeparture.getMinutes()<span class="minutes-text">min</span>
+                @Model.LineAndDeparture[1].Item2<span class="minutes-text">min</span>
             }
+
+
         </div>
-    }
-
-    @*This is my test div
-    <div class="minutes">
-
-        <span class="no-departure">@Model.StationName</span>
-
     </div>
     <div>
-        @using (Html.BeginForm("test", "Home"))
-        {
-            @Html.DropDownList("test2", new SelectList(Model.TestList))
-            <button type="submit" class="btn ">Save</button>
-
-        }
+        <input type="button" value="Velg annen stasjon" onclick="location.href='@Url.Action("Index")'"/>
+        <input type="button" value= "Velg andre linjer" onclick="location.href='@Url.Action("Stations")'"/>
+    </div>
 
 
-    </div>*@
+
 
 </section>

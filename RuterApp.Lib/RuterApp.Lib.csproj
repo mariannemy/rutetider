@@ -48,7 +48,6 @@
     <Compile Include="Apis\LinesForSpecificStops.cs" />
     <Compile Include="AppSettings.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="Departures.cs" />
     <Compile Include="RuterApiStationNameResult.cs" />
     <Compile Include="HttpClientProvider.cs" />
     <Compile Include="Apis\RuterApiDataResult.cs" />
