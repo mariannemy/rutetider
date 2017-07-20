@@ -26,7 +26,7 @@ namespace RuterApp.Lib
                 if (!linesServingStop.ContainsKey(station.GeneralInfo.DestinationRef.ToString()))
                 {
                     linesServingStop.Add(station.GeneralInfo.DestinationRef.ToString(), stationAndLineTextString);
-                }               
+                }
             }
             return linesServingStop;
         }
@@ -63,7 +63,7 @@ namespace RuterApp.Lib
             return stationList;
         }
 
-        public async Task<List<Tuple<string, string>>> GetDepartures(int selectedStationId, string[] selectedMetrosId)
+        public async Task<List<Tuple<string, string>>> GetDeparturesInMinutes(int selectedStationId, string[] selectedMetrosId)
         {
             List<Tuple<string, string>> metroNameAndDeparture = new List<Tuple<string, string>>();
             RuterApiDataResult[] departureApiResults = await _ruterReiseApi.StopVisit_GetDepartures(selectedStationId);
@@ -78,7 +78,7 @@ namespace RuterApp.Lib
                 {
                     if (departures.GeneralInfo.DestinationRef.Equals(Int32.Parse(selectedMetrosId[i])))
                     {
-                      
+
                         minutesPassed = Math.Floor((departures.GeneralInfo.RealTimeInfo.ExpectedDepartureTime - DateTime.Now).TotalMinutes + 0.30);
 
                         minutesToDeparture = minutesPassed.ToString();
@@ -99,10 +99,22 @@ namespace RuterApp.Lib
             return metroNameAndDeparture;
         }
 
+        public async Task<List<Tuple<string, string>>> GetDepartures(string selectedStation, string selectedLines)
+        {
 
-            
+            List<Tuple<int, string, int>> allStationsAndLines = await GetAllStationsAndLines();
+            int selectedStationId = allStationsAndLines.Find(x => x.Item2.ToLower().Equals(selectedStation.ToLower())).Item3;
 
- 
-        
+            RuterApiDataResult[] departureApiResults;
+
+            departureApiResults = await _ruterReiseApi.StopVisit_GetDepartures(selectedStationId);
+
+            return await GetDeparturesInMinutes(selectedStationId, selectedLines.Split(','));
+        }
+
+
+
+
+
     }
 }

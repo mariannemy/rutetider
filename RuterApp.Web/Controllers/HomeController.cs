@@ -18,11 +18,12 @@ namespace RuterApp.Controllers
         private RuterDataProvider _ruterStation;
         private static RuterApiStationNameResult _stationApiResult;
         private Station _station;
-
+        private RuterReiseFacade _ruterReiseFacade;
 
 
         public HomeController()
         {
+            _ruterReiseFacade = new RuterReiseFacade();
             _settings = new AppSettings();
             _ruterStation = new RuterDataProvider();
             _station = new Station();
@@ -32,7 +33,7 @@ namespace RuterApp.Controllers
 
         public async Task<ActionResult> Index()
         {
-            if (CookieExists())
+           /* if (CookieExists())
             {
                 var cookie = GetCookieValues();
 
@@ -40,14 +41,13 @@ namespace RuterApp.Controllers
                 {
                     return RedirectToAction("Show");
                 }
-            }
+            }*/
 
-            var ruterReiseFacade = new RuterReiseFacade();
-            List<Tuple<int, string, int>> _stationNames = await ruterReiseFacade.GetAllStationsAndLines();
+            List<Tuple<int, string, int>> _stationNames = await _ruterReiseFacade.GetAllStationsAndLines();
 
             var viewModel = new PickStationViewModel
             {
-                Stations = ruterReiseFacade.GetStationList(_stationNames)
+                Stations = _ruterReiseFacade.GetStationList(_stationNames)
             };
 
             return View(viewModel);
@@ -188,28 +188,8 @@ namespace RuterApp.Controllers
             selectedStation = cookie.StationId;
 
 
-            var _ruterReiseFacade = new RuterReiseFacade();
-
-            List<Tuple<int, string, int>> allStationsAndLines = await _ruterReiseFacade.GetAllStationsAndLines();
-            int selectedStationId = allStationsAndLines.Find(x => x.Item2.ToLower().Equals(selectedStation.ToLower())).Item3;
-
-
-
-            //***************************************************Ta inn stationsID og liste over metroID - vise de to neste*******
-            RuterApiDataResult[] departureApiResults;
-            RuterReiseApi _ruterReiseApi = new RuterReiseApi();
-
-            departureApiResults = await _ruterReiseApi.StopVisit_GetDepartures(selectedStationId);
-
-            List<Tuple<string, string>> metroNameAndDeparture = await _ruterReiseFacade.GetDepartures(selectedStationId, selectedLines.Split(','));
-
-
-            //*************************************************************************
-
-
-
-
-
+            List<Tuple<string, string>> metroNameAndDeparture = await _ruterReiseFacade.GetDepartures(selectedStation, selectedLines);
+        
             DepartureViewModel viewModel = new DepartureViewModel
             {
                 LineAndDeparture = metroNameAndDeparture,
@@ -231,7 +211,7 @@ namespace RuterApp.Controllers
         {
             List<string> clientCookies = new List<string>(Request.Cookies.AllKeys);
 
-            if (clientCookies.Exists(x => x.Contains("ruterAppUserId")))
+            if (clientCookies.Exists(x => x.Contains(Constants.COOKIE_NAME)))
             {
                 return true;
             }
@@ -241,7 +221,7 @@ namespace RuterApp.Controllers
         public void SetCookie(CookieValues cookieValues)
         {
             //må endre til en konstant!!!
-            var cookie = new HttpCookie("ruterAppUserId");
+            var cookie = new HttpCookie(Constants.COOKIE_NAME);
             cookie.Value = JsonConvert.SerializeObject(EncodeValues(cookieValues));
             cookie.Expires = DateTime.Now.AddYears(1);
             Response.Cookies.Add(cookie);
@@ -251,9 +231,9 @@ namespace RuterApp.Controllers
         {
             List<string> clientCookies = new List<string>(Request.Cookies.AllKeys);
 
-            if (clientCookies.Exists(x => x.Contains("ruterAppUserId")))
+            if (clientCookies.Exists(x => x.Contains(Constants.COOKIE_NAME)))
             {
-                var cookie = Request.Cookies.Get("ruterAppUserId");
+                var cookie = Request.Cookies.Get(Constants.COOKIE_NAME);
                 var cookieValues = new CookieValues();
 
                 cookieValues = JsonConvert.DeserializeObject<CookieValues>(cookie.Value);
@@ -275,7 +255,7 @@ namespace RuterApp.Controllers
         {
 
             List<string> clientCookies = new List<string>(Request.Cookies.AllKeys);
-            var cookie = Request.Cookies.Get("ruterAppUserId");
+            var cookie = Request.Cookies.Get(Constants.COOKIE_NAME);
             cookie.Value = JsonConvert.SerializeObject(EncodeValues(cookieValues));
             Response.Cookies.Set(cookie);
 
