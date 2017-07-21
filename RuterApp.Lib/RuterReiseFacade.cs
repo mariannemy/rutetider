@@ -21,7 +21,7 @@ namespace RuterApp.Lib
 
             foreach (var station in apiResult)
             {
-                stationAndLineTextString = "Linje " + station.GeneralInfo.LineNumberRef + " retning " + station.GeneralInfo.DestinationName;
+                stationAndLineTextString = "Linje " + station.GeneralInfo.LineNumberRef + " " + station.GeneralInfo.DestinationName;
 
                 if (!linesServingStop.ContainsKey(station.GeneralInfo.DestinationRef.ToString()))
                 {
