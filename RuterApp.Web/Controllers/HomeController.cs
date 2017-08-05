@@ -1,7 +1,6 @@
 ﻿using RuterApp.Lib;
 using RuterApp.Models;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using System;
@@ -10,16 +9,12 @@ using Newtonsoft.Json;
 
 namespace RuterApp.Controllers
 {
-    public class HomeController : Controller
+    public partial class HomeController : Controller
     {
-
-
         private readonly AppSettings _settings;
         private RuterDataProvider _ruterStation;
-        private static RuterApiStationNameResult _stationApiResult;
         private Station _station;
         private RuterReiseFacade _ruterReiseFacade;
-
 
         public HomeController()
         {
@@ -27,22 +22,10 @@ namespace RuterApp.Controllers
             _settings = new AppSettings();
             _ruterStation = new RuterDataProvider();
             _station = new Station();
-
         }
-
 
         public async Task<ActionResult> Index()
         {
-           /* if (CookieExists())
-            {
-                var cookie = GetCookieValues();
-
-                if(!String.IsNullOrEmpty(cookie.MetroId) && !String.IsNullOrEmpty(cookie.MetroId))
-                {
-                    return RedirectToAction("Show");
-                }
-            }*/
-
             List<Tuple<int, string, int>> _stationNames = await _ruterReiseFacade.GetAllStationsAndLines();
 
             var viewModel = new PickStationViewModel
@@ -53,28 +36,17 @@ namespace RuterApp.Controllers
             return View(viewModel);
         }
 
-
-
-
-
-
-
         public async Task<ActionResult> Stations()
 
         {
             var ruterReiseFacade = new RuterReiseFacade();
-
             string selectedStation = Request["FromStation"];
 
-
-            //Test ny cookie
             var cookieValue = new CookieValues
             {
                 StationId = selectedStation,
                 MetroId = ""
             };
-
-            // CookieValues cookieValues = new CookieValues();
 
             if (!CookieExists())
             {
@@ -94,13 +66,11 @@ namespace RuterApp.Controllers
                         return RedirectToAction("Index");
                     }
                     selectedStation = cookieValue.StationId;
-
                 }
                 else
                 {
                     OverWriteCookieValue(cookieValue);
                 }
-
             }
 
             if (String.IsNullOrEmpty(selectedStation))
@@ -112,24 +82,20 @@ namespace RuterApp.Controllers
             }
 
             List<Tuple<int, string, int>> _stationNames = await ruterReiseFacade.GetAllStationsAndLines();
-
             int fromStationId = _stationNames.Find(x => x.Item2.ToLower().Equals(selectedStation.ToLower())).Item3;
-
             Dictionary<string, string> linesServingStation = await ruterReiseFacade.GetLinesServingStop(fromStationId);
-
             string chooseAllStations = String.Empty;
+
             foreach (var lines in linesServingStation)
             {
                 chooseAllStations = chooseAllStations + lines.Key + ",";
             }
+
             if (linesServingStation.Count > 1)
             {
                 linesServingStation.Add(chooseAllStations.TrimEnd(','), "Velg alle");
             }
         
-
-
-
             var viewModel = new PickLinesViewModel
             {
                 LinesServingStation = linesServingStation
@@ -138,20 +104,14 @@ namespace RuterApp.Controllers
             return View(viewModel);
         }
 
-
-
-
-
         public async Task<ActionResult> Show(PickLinesViewModel lines)
         {
-
             string selectedLines = Request["selectedLines"];
             string selectedStation;
 
             var cookie = new CookieValues();
-
             var cookieValues = new CookieValues();
-            //Redirect if no cookie exist og cookie values not set
+
             if (!CookieExists())
             {
                 return RedirectToAction("Index");
@@ -187,7 +147,6 @@ namespace RuterApp.Controllers
             }
             selectedStation = cookie.StationId;
 
-
             List<Tuple<string, string>> metroNameAndDeparture = await _ruterReiseFacade.GetDepartures(selectedStation, selectedLines);
         
             DepartureViewModel viewModel = new DepartureViewModel
@@ -197,14 +156,6 @@ namespace RuterApp.Controllers
             };
 
             return View("Show", viewModel);
-
-
-        }
-
-        public class CookieValues
-        {
-            public string StationId { get; set; }
-            public string MetroId { get; set; }
         }
 
         public bool CookieExists()
@@ -220,7 +171,6 @@ namespace RuterApp.Controllers
 
         public void SetCookie(CookieValues cookieValues)
         {
-            //må endre til en konstant!!!
             var cookie = new HttpCookie(Constants.COOKIE_NAME);
             cookie.Value = JsonConvert.SerializeObject(EncodeValues(cookieValues));
             cookie.Expires = DateTime.Now.AddYears(1);
@@ -240,7 +190,6 @@ namespace RuterApp.Controllers
                 cookieValues.StationId = Server.UrlDecode(cookieValues.StationId);
                 return cookieValues;
             }
-
             return null;
         }
 
@@ -253,13 +202,10 @@ namespace RuterApp.Controllers
 
         public void OverWriteCookieValue(CookieValues cookieValues)
         {
-
             List<string> clientCookies = new List<string>(Request.Cookies.AllKeys);
             var cookie = Request.Cookies.Get(Constants.COOKIE_NAME);
             cookie.Value = JsonConvert.SerializeObject(EncodeValues(cookieValues));
             Response.Cookies.Set(cookie);
-
         }
     }
-
 }

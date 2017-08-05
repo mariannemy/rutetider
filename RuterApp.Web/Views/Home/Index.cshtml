@@ -1,17 +1,14 @@
 ﻿@model RuterApp.Models.PickStationViewModel
-
     
     <div class="container header">
         <h1 id="header-text">Velg stasjon</h1>
     </div>
-
     <div class="combobox container">
         @using (Html.BeginForm("Stations", "Home"))
         {
             @Html.DropDownList("FromStation", new SelectList(Model.Stations), new {@class="select"})
 
             <button type="submit" class="combobox-button">Velg</button>
-
         }
     </div>
 

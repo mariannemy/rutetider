@@ -5,14 +5,12 @@
 <div class=" container lines">
     <div class="checkbox">
 
-
         @Html.ValidationMessage("ChooseAStation")
         @Html.ValidationSummary()
         @using (Html.BeginForm("Show", "Home"))
         {
             string id;
             int i = 0;
-
 
             <ul>
                 @foreach (var line in Model.LinesServingStation)
@@ -26,11 +24,7 @@
                     i++;
                 }
             </ul>
-
-
             <button type="submit" class="checkbox-button">Velg</button>
-
         }
-
     </div>
 </div>

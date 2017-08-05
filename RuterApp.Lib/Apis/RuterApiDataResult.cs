@@ -6,8 +6,7 @@ namespace RuterApp.Lib
     public class RuterApiDataResult
     {
         [JsonProperty("MonitoredVehicleJourney")]
-        public LineInfo GeneralInfo { get; set; }
-     
+        public LineInfo GeneralInfo { get; set; }     
     }
 
     public class LineInfo

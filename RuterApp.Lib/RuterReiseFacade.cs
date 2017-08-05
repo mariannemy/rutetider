@@ -1,8 +1,6 @@
-﻿using RuterApp.Lib.Apis;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace RuterApp.Lib
@@ -31,7 +29,6 @@ namespace RuterApp.Lib
             return linesServingStop;
         }
 
-
         public async Task<List<Tuple<int, string, int>>> GetAllStationsAndLines()
         {
             var _totalNumberOfLines = 5;
@@ -56,10 +53,8 @@ namespace RuterApp.Lib
         public IEnumerable<string> GetStationList(List<Tuple<int, string, int>> stationsAndLines)
         {
             IEnumerable<string> stationList = new List<string>();
-
             stationList = stationsAndLines.Select(x => x.Item2).ToList().Distinct().OrderBy(x => x);
             stationList = stationList.Select(stationName => StringUtils.GetNormalizedStationName(stationName));
-
             return stationList;
         }
 
@@ -78,9 +73,8 @@ namespace RuterApp.Lib
                 {
                     if (departures.GeneralInfo.DestinationRef.Equals(Int32.Parse(selectedMetrosId[i])))
                     {
-
-                        minutesPassed = Math.Floor((departures.GeneralInfo.RealTimeInfo.ExpectedDepartureTime - DateTime.Now).TotalMinutes + 0.30);
-
+                        minutesPassed = Math.Floor((departures.GeneralInfo.RealTimeInfo.ExpectedDepartureTime - DateTime.Now).
+                            TotalMinutes + 0.30);
                         minutesToDeparture = minutesPassed.ToString();
 
                         if (minutesPassed == 0)
@@ -111,10 +105,5 @@ namespace RuterApp.Lib
 
             return await GetDeparturesInMinutes(selectedStationId, selectedLines.Split(','));
         }
-
-
-
-
-
     }
 }

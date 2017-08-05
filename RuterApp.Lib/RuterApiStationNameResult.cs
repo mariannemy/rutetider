@@ -1,5 +1,4 @@
-﻿
-namespace RuterApp.Lib
+﻿namespace RuterApp.Lib
 {
     public class RuterApiStationNameResult
     {

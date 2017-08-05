@@ -1,58 +1,73 @@
 ﻿@model RuterApp.Models.DepartureViewModel
-<section class="container">
 
-    <div class="this-station">
-        <div class="stations-text">@Model.StationName </div>
+
+<div class="container header">
+    <h1 id="header-text">@Model.StationName </h1>
+</div>
+
+
+
+
+<div class="container departure">
+    <div class="box box1">
+        <h1 class="departure-text">@Model.LineAndDeparture[0].Item1</h1>
     </div>
 
-        <div class="departure1">
-            <div class="end-station">@Model.LineAndDeparture[0].Item1</div>
-            <div class="minutes">
+    <div class="box box2"></div>
+    <div class="box box3">
 
-                @if (@Model.LineAndDeparture[0].Item2 == "Ingen")
-                {
-                    <span class="no-departure">60+ min</span>
-                }
-                else if (@Model.LineAndDeparture[0].Item2 == "NÅ")
-                {
-                    <span class="minutes-text">NÅ</span>
-                }
-                else
-                {
-                    @Model.LineAndDeparture[0].Item2<span class="minutes-text">min</span>
-                }
+        @if (@Model.LineAndDeparture[0].Item2 == "Ingen")
+        {
+            <h1 class="departure-text">60+ min</h1>
 
+        }
+        else if (@Model.LineAndDeparture[0].Item2 == "NÅ")
+        {
+            <h1 class="departure-text">NÅ</h1>
 
-            </div>
-        </div>
-  
-
-    <div class="departure1">
-        <div class="end-station">@Model.LineAndDeparture[1].Item1</div>
-        <div class="minutes">
-
-            @if (@Model.LineAndDeparture[1].Item2 == "Ingen")
-            {
-                <span class="no-departure">60+ min</span>
-            }
-            else if (@Model.LineAndDeparture[1].Item2 == "NÅ")
-            {
-                <span class="minutes-text">NÅ</span>
-            }
-            else
-            {
-                @Model.LineAndDeparture[1].Item2<span class="minutes-text">min</span>
-            }
-
-
-        </div>
-    </div>
-    <div>
-        <input type="button" value="Velg annen stasjon" onclick="location.href='@Url.Action("Index")'"/>
-        <input type="button" value= "Velg andre linjer" onclick="location.href='@Url.Action("Stations")'"/>
+        }
+        else
+        {
+            <h1 class="departure-text" id="min">@Model.LineAndDeparture[0].Item2</h1>
+        }
     </div>
 
+</div>
+<div class="container departure">
+    <div class="box box1">
+        <h1 class="departure-text">Mortensrud</h1>
+    </div>
+
+    <div class="box box2"></div>
+    <div class="box box3">
+        @if (@Model.LineAndDeparture[1].Item2 == "Ingen")
+        {
+            <h1 class="departure-text">60+ min</h1>
+
+        }
+        else if (@Model.LineAndDeparture[1].Item2 == "NÅ")
+        {
+            <h1 class="departure-text">NÅ</h1>
+
+        }
+        else
+        {
+            <h1 class="departure-text" id="min">@Model.LineAndDeparture[1].Item2</h1>
+        }
+    </div>
+
+</div>
+
+<div class="container buttons">
+    <div class="buttons-station-line">
+        <input type="button" value="Bytt stasjon" class="departure-button" onclick="location.href='@Url.Action("Index")'">
+    </div>
+    <div class="buttons-station-line">
+        <input type="button" value="Bytt linje" class="departure-button" onclick="location.href='@Url.Action("Stations")'">
+    </div>
+</div>
 
 
 
-</section>
+
+
