@@ -1,112 +1,255 @@
-﻿
-@font-face{
+﻿@font-face {
     font-family: openSans;
     src: url(open-sans/OpenSans-Light.ttf);
     src: url(open-sans/OpenSans-Light-webfont.eot);
     src: url(open-sans/OpenSans-Light-webfont.woff);
 }
 
+li {
+    list-style-type: none;
+    text-align: left;
+}
+
+.lines {
+    background-color: #FFD358;
+    text-align: center;
+}
+
+.checkbox-lines {
+    width: 15px;
+    height: 15px;
+}
+
+.checkbox {
+    width: 100%;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    margin: auto;
+}
+
+.checkbox-button {
+    margin-top: 25px;
+}
+
+.checkbox-label {
+    font-family: openSans;
+    font-size: 16px;
+    line-height: 38px;
+}
+
+.combobox {
+    background-color: #FFD358;
+    width: 100%;
+    padding-bottom: 20px;
+    text-align: center;
+    padding-top: 20px;
+}
+
+select {
+    margin: auto;
+    display: block;
+    width: 192px;
+    height: 28px;
+    font-size: 18px;
+}
+
+.combobox-button {
+    margin-top: 120px;
+}
+
 body {
-    background-color: #FAFAFA;
-}
-.container{
-    width: 420px;
-    height: 510px;  
-    margin: auto;
-    font-family: openSans, Helvetica, Arial;
-    text-align: center;
+    margin: 0px;
 }
 
-.this-station{
-    height: 110px;
-    width: 100%;
+button {
+    width: 100px;
+    height: 48px;
+    font-family: openSans;
+    font-size: 16px;
     background-color: #6B7A8F;
-}
-.stations-text{
-    line-height: 108px;
-    font-size: 32px;
+    border-style: none;
     color: white;
 }
-.end-station{
-    height: 75px;
-    width: 72%;
-    margin-top: 10px;
-    line-height: 78px;
-    box-sizing: border-box;
 
-    display:  float;
-    float: left;    
-
-    font-size: 20px;
-    color: black;
-    background-color: #FFD358;
-}
-.minutes{
-    height: 75px;
-    width: 29.5%;
-    line-height: 76px;
-    margin-top: 10px;
-    margin-left:-40px;
-    
-    display:  float;
-    float: right;
-
-    text-align:center;
-
-    font-size: 30px;
-    opacity: 0.82;
-    background-color: #F7882F;
-    color: black;
-}
-.minutes-text{
-    font-size: 20px;
-    color: black;
-}
-.no-departure {
-     font-size: 18px;
-     line-height: 40px;
+input {
+    width: 100px;
+    height: 48px;
+    font-family: openSans;
+    font-size: 16px;
+    background-color: #6B7A8F;
+    border-style: none;
+    color: white;
 }
 
-@media screen and (max-width: 420px) {
-
-.container{
-    width: 100%;
-    height: 510px;  
-    margin: auto;
+h1 {
+    margin: 0px;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
     text-align: center;
-    font-family: sans-serif, Arial;
+    font-family: openSans;
+    font-weight: 400;
 }
-.this-station{
-    height: 60px;
-}
-.stations-text{
-    line-height: 60px;
-    font-size: 14px;
-    color: white;
-}
-.end-station{
-    width: 77%;
-    height: 50px;
+
+.departure-button {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
     margin-top: 5px;
-    line-height: 52px;
-    font-size: 10px;
+}
+
+.departure {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.departure-minutes {
+    width: 100%;
+}
+
+.box {
+    width: 100%;
+    height: 60px;
+    box-sizing: border-box;
+}
+
+.container {
+    width: 100%;
+    margin: auto;
+    margin-bottom: 4px;
+}
+
+.header {
+    background-color: #6B7A8F;
+    height: 110px;
+}
+
+.box1 {
     background-color: #FFD358;
 }
-.minutes{
-    width: 24.5%;
-    margin-top: 5px;
-    height: 50px;  
-    line-height: 52px;
-    font-size: 14px;
-    opacity: 1;
-    background-color: #FFB87F;
 
+.box2 {
+    background-color: #F7882F;
+    height: 2px;
 }
-.minutes-text{
-    font-size: 10px;
+
+.box3 {
+    background-color: rgba(247, 136, 47, 0.82);
+    height: 30px;
 }
-.no-departure {
-     font-size: 10px;
-     line-height: 40px;
+
+.departure-text {
+    font-size: 16px;
 }
+
+#header-text {
+    font-size: 22px;
+    color: white;
+}
+
+.buttons {
+    display: flex;
+    flex: wrap;
+}
+
+.buttons-station-line {
+    width: 50%;
+    height: 100px;
+    text-align: center;
+    vertical-align: center;
+}
+
+#min {
+    font-size: 20px;
+}
+
+@media screen and (min-width: 420px) {
+    #min {
+        font-size: 28px;
+    }
+
+    .checkbox-lines {
+        width: 18px;
+        height: 18px;
+    }
+
+    .checkbox-label {
+        font-family: openSans;
+        font-size: 20px;
+        line-height: 36px;
+    }
+
+    .container {
+        margin-bottom: 12px;
+    }
+
+    .departure-minutes {
+        display: flex;
+        flex: wrap;
+    }
+
+    .box {
+        height: 84px;
+        box-sizing: border-box;
+    }
+
+    .box1 {
+        width: 72%;
+    }
+
+    .box2 {
+        width: 1%;
+    }
+
+    .box3 {
+        width: 27%;
+    }
+
+    .departure-text {
+        font-size: 22px;
+    }
+
+    #header-text {
+        font-size: 32px;
+    }
+
+    .header {
+        height: 170px;
+    }
+
+    .buttons-station-line {
+        height: 150px;
+    }
+}
+
+@media screen and (min-width: 630px) {
+    .checkbox {
+        width: 88%;
+    }
+
+    .checkbox-lines {
+        width: 18px;
+        height: 18px;
+    }
+
+    .checkbox-label {
+        font-family: openSans;
+        font-size: 20px;
+        line-height: 36px;
+    }
+
+    .container {
+        width: 622px;
+    }
+
+    input {
+        width: 120px;
+        height: 54px;
+        font-size: 18px;
+    }
+
+    #header-text {
+        font-size: 38px;
+    }
 }

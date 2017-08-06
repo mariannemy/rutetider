@@ -1,0 +1,73 @@
+﻿@model RuterApp.Models.DepartureViewModel
+
+
+<div class="container header">
+    <h1 id="header-text">@Model.StationName </h1>
+</div>
+
+
+
+
+<div class="container departure">
+    <div class="box box1">
+        <h1 class="departure-text">@Model.LineAndDeparture[0].Item1</h1>
+    </div>
+
+    <div class="box box2"></div>
+    <div class="box box3">
+
+        @if (@Model.LineAndDeparture[0].Item2 == "Ingen")
+        {
+            <h1 class="departure-text">60+ min</h1>
+
+        }
+        else if (@Model.LineAndDeparture[0].Item2 == "NÅ")
+        {
+            <h1 class="departure-text">NÅ</h1>
+
+        }
+        else
+        {
+            <h1 class="departure-text" id="min">@Model.LineAndDeparture[0].Item2</h1>
+        }
+    </div>
+
+</div>
+<div class="container departure">
+    <div class="box box1">
+        <h1 class="departure-text">Mortensrud</h1>
+    </div>
+
+    <div class="box box2"></div>
+    <div class="box box3">
+        @if (@Model.LineAndDeparture[1].Item2 == "Ingen")
+        {
+            <h1 class="departure-text">60+ min</h1>
+
+        }
+        else if (@Model.LineAndDeparture[1].Item2 == "NÅ")
+        {
+            <h1 class="departure-text">NÅ</h1>
+
+        }
+        else
+        {
+            <h1 class="departure-text" id="min">@Model.LineAndDeparture[1].Item2</h1>
+        }
+    </div>
+
+</div>
+
+<div class="container buttons">
+    <div class="buttons-station-line">
+        <input type="button" value="Bytt stasjon" class="departure-button" onclick="location.href='@Url.Action("Index")'">
+    </div>
+    <div class="buttons-station-line">
+        <input type="button" value="Bytt linje" class="departure-button" onclick="location.href='@Url.Action("Stations")'">
+    </div>
+</div>
+
+
+
+
+

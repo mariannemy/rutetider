@@ -20,12 +20,9 @@ namespace RuterApp.Lib
             }
         }
 
-        public string UrlGetDeparture
+        public string UrlGetDeparture(int metroId)
         {
-            get
-            {
-                return "http://reisapi.ruter.no/StopVisit/GetDepartures/" + MetroId + "?transporttypes=Metro";
-            }
+                return "http://reisapi.ruter.no/StopVisit/GetDepartures/" + metroId + "?transporttypes=Metro"; 
         }
 
         public string UrlGetStationName
@@ -34,6 +31,16 @@ namespace RuterApp.Lib
             {
                 return "http://reisapi.ruter.no/Place/GetStop/" + MetroId;
             }
+        }
+
+        public string UrlGetStation(int lineNumber)
+        {         
+                return "http://reisapi.ruter.no/Place/GetStopsByLineID/" + lineNumber;           
+        }
+
+        public string UrlGetLinesByStopId(int stopId)
+        {
+            return "http://reisapi.ruter.no/line/getlinesbystopid/" + stopId;
         }
     }
 }
